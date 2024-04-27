@@ -1,4 +1,11 @@
 from sklearn.metrics import fbeta_score, precision_score, recall_score
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
+import logging
+import joblib
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
+logger = logging.getLogger()
 
 
 # Optional: implement hyperparameter tuning.
@@ -17,8 +24,29 @@ def train_model(X_train, y_train):
     model
         Trained machine learning model.
     """
+    logger.info("Training model with hyperparameter tunning...")
+    param_grid = {
+        'n_estimators': [100, 200],
+        'max_depth': [None, 10, 20],
+        'min_samples_split': [2, 5, 10],
+        'min_samples_leaf': [1, 2, 4]
+    }
+    base_model = RandomForestClassifier(random_state=42)
+    grid_search = GridSearchCV(estimator=base_model, param_grid=param_grid, cv=5, n_jobs=-1, verbose=2)
+    grid_search.fit(X_train, y_train)
+    best_model = grid_search.best_estimator_
+    logger.info("Best Hyperparameters:")
+    logger.info(grid_search.best_params_)
+    return best_model
 
-    pass
+
+def load_model(model_path):
+    return joblib.load(model_path)
+
+
+def save_model_and_encoder(model, model_path):
+    joblib.dump(model, model_path)
+
 
 
 def compute_model_metrics(y, preds):
@@ -57,4 +85,4 @@ def inference(model, X):
     preds : np.array
         Predictions from the model.
     """
-    pass
+    return model.predict(X)
