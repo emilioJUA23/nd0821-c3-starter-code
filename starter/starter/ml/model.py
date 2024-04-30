@@ -71,6 +71,29 @@ def compute_model_metrics(y, preds):
     return precision, recall, fbeta
 
 
+def compute_metrics_cat_features(model, X, y, cat_features):
+    logger.info("Getting overall metrics...")
+    metrics = {}
+    preds = inference(model, X)
+    overall_precision, overall_recall, overall_fbeta = compute_model_metrics(y, preds)
+    metrics['overall'] = {'precision': overall_precision, 'recall': overall_recall, 'fbeta': overall_fbeta}
+
+    logger.info("Calculating metrics for each slice...")
+    for cat_feature in cat_features:
+        columns = X.filter(like=cat_feature).columns
+        for column in columns:
+            mask = (X[column] == 1)
+            X_slice = X[mask]
+            y_slice = y[mask]
+            if not X_slice.empty:
+                preds_slice = inference(model, X_slice)
+                precision, recall, fbeta = compute_model_metrics(y_slice, preds_slice)
+                metrics[column] = {'precision': precision, 'recall': recall, 'fbeta': fbeta}
+
+    return metrics
+
+
+
 def inference(model, X):
     """ Run model inferences and return the predictions.
 
