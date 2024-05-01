@@ -1,5 +1,5 @@
 import numpy as np
-from starter.ml.model import train_model, compute_model_metrics
+from ml.model import train_model, compute_model_metrics, load_model
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.datasets import make_classification
 from sklearn.metrics import accuracy_score
@@ -39,6 +39,20 @@ def test_compute_model_metrics():
     
     # Check if precision, recall, and F-beta score meet the thresholds
     assert precision >= precision_threshold and recall >= recall_threshold and fbeta >= fbeta_threshold
+
+
+def test_load_model():
+    model_path = '../../model/'
+    model = load_model(f"{model_path}model.pkl")
+    
+    assert isinstance(model, RandomForestClassifier)
+
+
+
+
+
+
+
 
 
 

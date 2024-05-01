@@ -1,9 +1,11 @@
+import pandas as pd
+from scipy.sparse import data
 from sklearn.metrics import fbeta_score, precision_score, recall_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 import logging
 import joblib
-
+from ml.data import process_data
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()
 
@@ -44,7 +46,7 @@ def load_model(model_path):
     return joblib.load(model_path)
 
 
-def save_model_and_encoder(model, model_path):
+def save_model(model, model_path):
     joblib.dump(model, model_path)
 
 
@@ -109,3 +111,26 @@ def inference(model, X):
         Predictions from the model.
     """
     return model.predict(X)
+
+
+if __name__ == "__main__":
+    data_path = '../../data/census.csv'
+    model_path = '../../model/'
+    df = pd.read_csv(data_path)
+    cat_feat = [
+        "workclass",
+        "education",
+        "marital-status",
+        "occupation",
+        "relationship",
+        "race",
+        "sex",
+        "native-country",
+    ]
+    X,y,encoder,lb = process_data(df, cat_feat, 'salary')
+    print(y)
+    print(X)
+    model = train_model(X,y)
+    print(model)
+    save_model(model, f"{model_path}model.pkl")
+
