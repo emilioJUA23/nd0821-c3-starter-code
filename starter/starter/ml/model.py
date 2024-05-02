@@ -75,27 +75,36 @@ def compute_model_metrics(y, preds):
     return precision, recall, fbeta
 
 
-def compute_metrics_cat_features(model, X, y, cat_features):
-    logger.info("Getting overall metrics...")
-    metrics = {}
-    preds = inference(model, X)
-    overall_precision, overall_recall, overall_fbeta = compute_model_metrics(y, preds)
-    metrics['overall'] = {'precision': overall_precision, 'recall': overall_recall, 'fbeta': overall_fbeta}
+def compute_slices(df, feature, y, preds):
+    """
+    Compute the performance on slices for a given categorical feature
+    a slice corresponds to one value option of the categorical feature analyzed
+    """   
+    print(df)
+    slice_options = list(set(df[feature]))
+    perf_df = pd.DataFrame(index=slice_options, 
+                            columns=['feature','n_samples','precision', 'recall', 'fbeta'])
+    for option in slice_options:
+        slice_mask = df[feature]==option
 
-    logger.info("Calculating metrics for each slice...")
-    for cat_feature in cat_features:
-        columns = X.filter(like=cat_feature).columns
-        for column in columns:
-            mask = (X[column] == 1)
-            X_slice = X[mask]
-            y_slice = y[mask]
-            if not X_slice.empty:
-                preds_slice = inference(model, X_slice)
-                precision, recall, fbeta = compute_model_metrics(y_slice, preds_slice)
-                metrics[column] = {'precision': precision, 'recall': recall, 'fbeta': fbeta}
+        slice_y = y[slice_mask]
+        slice_preds = preds[slice_mask]
+        precision, recall, fbeta = compute_model_metrics(slice_y, slice_preds)
+        
+        perf_df.at[option, 'feature'] = feature
+        perf_df.at[option, 'n_samples'] = len(slice_y)
+        perf_df.at[option, 'precision'] = precision
+        perf_df.at[option, 'recall'] = recall
+        perf_df.at[option, 'fbeta'] = fbeta
 
-    return metrics
+    # reorder columns in performance dataframe
+    perf_df.reset_index(names='feature value', inplace=True)
+    colList = list(perf_df.columns)
+    colList[0], colList[1] =  colList[1], colList[0]
+    perf_df = perf_df[colList]
 
+    return perf_df
+    
 
 
 def inference(model, X):
@@ -129,13 +138,23 @@ if __name__ == "__main__":
         "sex",
         "native-country",
     ]
+    df = df[cat_feat+['salary']]
     X,y,encoder,lb = process_data(df, cat_feat, 'salary')
     
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     print(y)
     print(X)
     model = train_model(X_train, y_train)
-    preds = inference(model, X_test)
-    metrics = compute_model_metrics(y_test, preds)
+    preds = inference(model, X)
+    metrics = compute_model_metrics(y, preds)
     save_model(model, f"{model_path}model.pkl")
     print(metrics)
+    for feat in cat_feat:
+        f_df = compute_slices(df, feat, y, preds)
+        print(feat)
+        print(f_df)
+
+
+
+
+
