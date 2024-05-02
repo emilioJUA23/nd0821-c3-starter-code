@@ -5,7 +5,9 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 import logging
 import joblib
-from ml.data import process_data
+from starter.ml.data import process_data
+from sklearn.model_selection import train_test_split
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()
 
@@ -128,9 +130,12 @@ if __name__ == "__main__":
         "native-country",
     ]
     X,y,encoder,lb = process_data(df, cat_feat, 'salary')
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     print(y)
     print(X)
-    model = train_model(X,y)
-    print(model)
+    model = train_model(X_train, y_train)
+    preds = inference(model, X_test)
+    metrics = compute_model_metrics(y_test, preds)
     save_model(model, f"{model_path}model.pkl")
-
+    print(metrics)
