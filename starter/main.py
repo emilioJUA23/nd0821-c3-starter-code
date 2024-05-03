@@ -8,7 +8,7 @@ import os, pickle
 from starter.ml.data import process_data
 
 
-class InputData(BaseModel):
+class BaseInferenceObject(BaseModel):
     age: int
     workclass: str 
     fnlgt: int
