@@ -45,12 +45,13 @@ def train_model(X_train, y_train):
 
 
 def load_model(model_path):
-    return joblib.load(model_path)
+    return joblib.load(f"{model_path}model.pkl"), joblib.load(f"{model_path}encoder.pkl"), joblib.load(f"{model_path}lb.pkl")
 
 
-def save_model(model, model_path):
-    joblib.dump(model, model_path)
-
+def save_model(model, encoder, lb, model_path):
+    joblib.dump(model, f"{model_path}model.pkl")
+    joblib.dump(encoder, f"{model_path}encoder.pkl")
+    joblib.dump(lb, f"{model_path}lb.pkl")
 
 
 def compute_model_metrics(y, preds):
@@ -138,7 +139,7 @@ if __name__ == "__main__":
         "sex",
         "native-country",
     ]
-    df = df[cat_feat+['salary']]
+    
     X,y,encoder,lb = process_data(df, cat_feat, 'salary')
     
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -147,7 +148,7 @@ if __name__ == "__main__":
     model = train_model(X_train, y_train)
     preds = inference(model, X)
     metrics = compute_model_metrics(y, preds)
-    save_model(model, f"{model_path}model.pkl")
+    save_model(model,encoder, lb, model_path)
     print(metrics)
     for feat in cat_feat:
         f_df = compute_slices(df, feat, y, preds)

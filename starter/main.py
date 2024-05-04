@@ -6,7 +6,18 @@ from pydantic import BaseModel
 import pandas as pd
 import os, pickle
 from starter.ml.data import process_data
+from starter.ml.model import load_model, inference
 
+cat_features = [
+    "workclass",
+    "education",
+    "marital-status",
+    "occupation",
+    "relationship",
+    "race",
+    "sex",
+    "native-country",
+]
 
 class BaseInferenceObject(BaseModel):
     age: int
@@ -25,8 +36,24 @@ class BaseInferenceObject(BaseModel):
     native_country: str
 
 app = FastAPI()
+model, encoder, lb = load_model('./model/')
+
 
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return 'Hello from the inferenci pipeline.'
+
+
+@app.post("/inference/")
+def infer(data: BaseInferenceObject):
+    obj = data.dict()
+    proccessed = pd.DataFrame([obj])
+    proccessed = proccessed.rename(columns={
+        "marital_status":"marital-status",
+        "native_country":"native-country"
+        })
+    print(proccessed)
+    proccessed,_,_,_ = process_data(proccessed, cat_features, training=False, encoder=encoder, lb=lb)
+    preds = model.predict(proccessed)
+    return f"{preds}"
