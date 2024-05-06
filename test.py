@@ -71,6 +71,7 @@ def test_load_lb():
 
     assert lb is not None
 
+
 def test_inference():
     X = np.random.rand(10, 5)
     y = np.random.randint(2, size=10)
