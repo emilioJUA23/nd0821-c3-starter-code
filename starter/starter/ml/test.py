@@ -1,5 +1,5 @@
-from starter.starter.ml.model import (train_model, 
-                                      compute_model_metrics, 
+from starter.starter.ml.model import (train_model,
+                                      compute_model_metrics,
                                       load_model)
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.datasets import make_classification
