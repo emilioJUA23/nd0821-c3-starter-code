@@ -1,10 +1,8 @@
 # Put the code for your API here.
-from fastapi import FastAPI, HTTPException
-from typing import Union, Optional
+from fastapi import FastAPI
 # BaseModel from Pydantic is used to define data objects
 from pydantic import BaseModel
 import pandas as pd
-import os, pickle
 from starter.starter.ml.data import process_data
 from starter.starter.ml.model import load_model
 
@@ -19,9 +17,10 @@ cat_features = [
     "native-country",
 ]
 
+
 class BaseInferenceObject(BaseModel):
     age: int
-    workclass: str 
+    workclass: str
     fnlgt: int
     education: str
     education_num: int
@@ -35,10 +34,10 @@ class BaseInferenceObject(BaseModel):
     hours_per_week: int
     native_country: str
 
+
 app = FastAPI()
 
 model, encoder, lb = load_model('./starter/model/')
-
 
 
 @app.get("/")
@@ -51,10 +50,11 @@ def infer(data: BaseInferenceObject):
     obj = data.dict()
     proccessed = pd.DataFrame([obj])
     proccessed = proccessed.rename(columns={
-        "marital_status":"marital-status",
-        "native_country":"native-country"
-        })
+        "marital_status": "marital-status",
+        "native_country": "native-country"
+    })
     print(proccessed)
-    proccessed,_,_,_ = process_data(proccessed, cat_features, training=False, encoder=encoder, lb=lb)
+    proccessed, _, _, _ = process_data(
+        proccessed, cat_features, training=False, encoder=encoder, lb=lb)
     preds = model.predict(proccessed)
     return f"{preds}"

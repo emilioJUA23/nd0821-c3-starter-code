@@ -1,5 +1,4 @@
 import pandas as pd
-from scipy.sparse import data
 from sklearn.metrics import fbeta_score, precision_score, recall_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
@@ -36,7 +35,12 @@ def train_model(X_train, y_train):
         'min_samples_leaf': [1, 2, 4]
     }
     base_model = RandomForestClassifier(random_state=42)
-    grid_search = GridSearchCV(estimator=base_model, param_grid=param_grid, cv=5, n_jobs=-1, verbose=2)
+    grid_search = GridSearchCV(
+        estimator=base_model,
+        param_grid=param_grid,
+        cv=5,
+        n_jobs=-1,
+        verbose=2)
     grid_search.fit(X_train, y_train)
     best_model = grid_search.best_estimator_
     logger.info("Best Hyperparameters:")
@@ -45,7 +49,8 @@ def train_model(X_train, y_train):
 
 
 def load_model(model_path):
-    return joblib.load(f"{model_path}model.pkl"), joblib.load(f"{model_path}encoder.pkl"), joblib.load(f"{model_path}lb.pkl")
+    return joblib.load(f"{model_path}model.pkl"), joblib.load(
+        f"{model_path}encoder.pkl"), joblib.load(f"{model_path}lb.pkl")
 
 
 def save_model(model, encoder, lb, model_path):
@@ -56,7 +61,8 @@ def save_model(model, encoder, lb, model_path):
 
 def compute_model_metrics(y, preds):
     """
-    Validates the trained machine learning model using precision, recall, and F1.
+    Validates the trained machine learning
+    model using precision, recall, and F1.
 
     Inputs
     ------
@@ -80,18 +86,20 @@ def compute_slices(df, feature, y, preds):
     """
     Compute the performance on slices for a given categorical feature
     a slice corresponds to one value option of the categorical feature analyzed
-    """   
+    """
     print(df)
     slice_options = list(set(df[feature]))
-    perf_df = pd.DataFrame(index=slice_options, 
-                            columns=['feature','n_samples','precision', 'recall', 'fbeta'])
+    perf_df = pd.DataFrame(
+        index=slice_options,
+        columns=['feature', 'n_samples',
+                 'precision', 'recall', 'fbeta'])
     for option in slice_options:
-        slice_mask = df[feature]==option
+        slice_mask = df[feature] == option
 
         slice_y = y[slice_mask]
         slice_preds = preds[slice_mask]
         precision, recall, fbeta = compute_model_metrics(slice_y, slice_preds)
-        
+
         perf_df.at[option, 'feature'] = feature
         perf_df.at[option, 'n_samples'] = len(slice_y)
         perf_df.at[option, 'precision'] = precision
@@ -101,11 +109,10 @@ def compute_slices(df, feature, y, preds):
     # reorder columns in performance dataframe
     perf_df.reset_index(names='feature value', inplace=True)
     colList = list(perf_df.columns)
-    colList[0], colList[1] =  colList[1], colList[0]
+    colList[0], colList[1] = colList[1], colList[0]
     perf_df = perf_df[colList]
 
     return perf_df
-    
 
 
 def inference(model, X):
@@ -139,23 +146,19 @@ if __name__ == "__main__":
         "sex",
         "native-country",
     ]
-    
-    X,y,encoder,lb = process_data(df, cat_feat, 'salary')
-    
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    X, y, encoder, lb = process_data(df, cat_feat, 'salary')
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42)
     print(y)
     print(X)
     model = train_model(X_train, y_train)
     preds = inference(model, X)
     metrics = compute_model_metrics(y, preds)
-    save_model(model,encoder, lb, model_path)
+    save_model(model, encoder, lb, model_path)
     print(metrics)
     for feat in cat_feat:
         f_df = compute_slices(df, feat, y, preds)
         print(feat)
         print(f_df)
-
-
-
-
-
