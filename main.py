@@ -36,7 +36,7 @@ class BaseInferenceObject(BaseModel):
     native_country: str
 
 app = FastAPI()
-model, encoder, lb = load_model('./model/')
+model, encoder, lb = load_model('./starter/model/')
 
 
 
