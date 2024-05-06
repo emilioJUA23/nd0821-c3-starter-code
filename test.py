@@ -1,4 +1,5 @@
-from starter.starter.ml.model import (train_model,
+import numpy as np
+from starter.starter.ml.model import (train_model, inference,
                                       compute_model_metrics,
                                       load_model)
 from sklearn.ensemble import RandomForestClassifier
@@ -69,3 +70,11 @@ def test_load_lb():
     _, _, lb = load_model(f"{model_path}")
 
     assert lb is not None
+
+def test_inference():
+    X = np.random.rand(10, 5)
+    y = np.random.randint(2, size=10)
+    model = train_model(X, y)
+    pred = inference(model, X)
+    # Check if pred.shape is similar to y.shape
+    assert y.shape == pred.shape
