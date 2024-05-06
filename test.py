@@ -51,7 +51,21 @@ def test_compute_model_metrics():
 
 
 def test_load_model():
-    model_path = '../../model/'
-    model = load_model(f"{model_path}model.pkl")
+    model_path = 'starter/model/'
+    model, _, _ = load_model(f"{model_path}")
 
     assert isinstance(model, RandomForestClassifier)
+
+
+def test_load_encoder():
+    model_path = 'starter/model/'
+    _, encoder, _ = load_model(f"{model_path}")
+
+    assert encoder is not None
+
+
+def test_load_lb():
+    model_path = 'starter/model/'
+    _, _, lb = load_model(f"{model_path}")
+
+    assert lb is not None
