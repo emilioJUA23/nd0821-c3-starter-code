@@ -5,8 +5,8 @@ from typing import Union, Optional
 from pydantic import BaseModel
 import pandas as pd
 import os, pickle
-from starter.ml.data import process_data
-from starter.ml.model import load_model, inference
+from .starter.ml.data import process_data
+from .starter.ml.model import load_model, inference
 
 cat_features = [
     "workclass",
