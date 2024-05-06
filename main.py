@@ -5,8 +5,8 @@ from typing import Union, Optional
 from pydantic import BaseModel
 import pandas as pd
 import os, pickle
-from .starter.ml.data import process_data
-from .starter.ml.model import load_model, inference
+from starter.starter.ml.data import process_data
+from starter.starter.ml.model import load_model
 
 cat_features = [
     "workclass",
@@ -36,6 +36,7 @@ class BaseInferenceObject(BaseModel):
     native_country: str
 
 app = FastAPI()
+
 model, encoder, lb = load_model('./starter/model/')
 
 
