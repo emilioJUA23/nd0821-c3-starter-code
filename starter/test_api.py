@@ -9,7 +9,9 @@ import requests
 import json
 
 # url = "enter heroku web app url here"
-url = "https://udacity-final-project-a57c3c29e43a.herokuapp.com/inference/"
+# url = "https://udacity-final-project-a57c3c29e43a.herokuapp.com/inference/"
+url_inference = 'http://localhost:8000/inference'
+url_root = 'http://localhost:8000/'
 
 
 def test_approve():
@@ -34,7 +36,7 @@ def test_approve():
     data = json.dumps(sample)
 
     # post to API and collect response
-    response = requests.post(url, data=data)
+    response = requests.post(url_inference, data=data)
 
     # display output - response will show sample details + model prediction
     # added
@@ -63,8 +65,18 @@ def test_fail():
     data = json.dumps(sample)
 
     # post to API and collect response
-    response = requests.post(url, data=data)
+    response = requests.post(url_inference, data=data)
 
     # display output - response will show sample details + model prediction
     # added
     assert response.status_code == 200 and response.text == '"[0]"'
+
+
+def test_root():
+    # explicit the sample to perform inference on
+    # post to API and collect response
+    response = requests.get(url_root)
+
+    # display output - response will show sample details + model prediction
+    # added
+    assert response.status_code == 200
