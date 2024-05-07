@@ -38,22 +38,22 @@ class BaseInferenceObject(BaseModel):
         "json_schema_extra": {
             "examples": [
                 {
-			    "age": 40,
-			    "workclass": "Private",
-			    "fnlgt": 77516,
-			    "education": "Doctorate",
-			    "education_num": 16,
-			    "marital_status": "Married-civ-spouse",
-			    "occupation": "Prof-specialty",
-			    "relationship": "Husband",
-			    "race": "White",
-			    "sex": "Male",
-			    "capital_gain": 2174,
-			    "capital_loss": 0,
-			    "hours_per_week": 60,
-			    "native_country": "United-States"
-			    }
-			]
+                 "age": 40,
+                 "workclass": "Private",
+                 "fnlgt": 77516,
+                 "education": "Doctorate",
+                 "education_num": 16,
+                 "marital_status": "Married-civ-spouse",
+                 "occupation": "Prof-specialty",
+                 "relationship": "Husband",
+                 "race": "White",
+                 "sex": "Male",
+                 "capital_gain": 2174,
+                 "capital_loss": 0,
+                 "hours_per_week": 60,
+                 "native_country": "United-States"
+                }
+            ]
         }
     }
 
