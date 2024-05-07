@@ -158,7 +158,10 @@ if __name__ == "__main__":
     metrics = compute_model_metrics(y, preds)
     save_model(model, encoder, lb, model_path)
     print(metrics)
-    for feat in cat_feat:
-        f_df = compute_slices(df, feat, y, preds)
-        print(feat)
-        print(f_df)
+    with open('slice_output.txt', 'w') as file:
+        for feat in cat_feat:
+            f_df = compute_slices(df, feat, y, preds)
+            file.write(f"{feat}\n")
+            file.write("\n")
+            file.write(f_df.to_string())
+            file.write("\n")
