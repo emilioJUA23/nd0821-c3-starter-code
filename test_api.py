@@ -5,7 +5,6 @@ author: Luis Emilio Juarez
 date: 2040-05-04
 """
 
-import json
 from fastapi.testclient import TestClient
 from main import app
 client = TestClient(app)
@@ -68,5 +67,3 @@ def test_fail():
     # display output - response will show sample details + model prediction
     # added
     assert response.status_code == 200 and response.text == '"[0]"'
-
-
