@@ -5,13 +5,15 @@ author: Luis Emilio Juarez
 date: 2040-05-04
 """
 
-import requests
 import json
+from fastapi.testclient import TestClient
+from main import app
+client = TestClient(app)
 
-# url = "enter heroku web app url here"
-# url = "https://udacity-final-project-a57c3c29e43a.herokuapp.com/inference/"
-url_inference = 'http://localhost:8000/inference/'
-url_root = 'http://localhost:8000/'
+
+def test_root():
+    response = client.get("/")
+    assert response.status_code == 200
 
 
 def test_approve():
@@ -33,10 +35,8 @@ def test_approve():
         "native_country": "United-States"
 
     }
-    data = json.dumps(sample)
-
     # post to API and collect response
-    response = requests.post(url_inference, data=data)
+    response = client.post('/inference/', json=sample)
 
     # display output - response will show sample details + model prediction
     # added
@@ -62,21 +62,11 @@ def test_fail():
         "native_country": "United-States"
 
     }
-    data = json.dumps(sample)
-
     # post to API and collect response
-    response = requests.post(url_inference, data=data)
+    response = client.post('/inference/', json=sample)
 
     # display output - response will show sample details + model prediction
     # added
     assert response.status_code == 200 and response.text == '"[0]"'
 
 
-def test_root():
-    # explicit the sample to perform inference on
-    # post to API and collect response
-    response = requests.get(url_root)
-
-    # display output - response will show sample details + model prediction
-    # added
-    assert response.status_code == 200
