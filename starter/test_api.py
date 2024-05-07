@@ -10,7 +10,7 @@ import json
 
 # url = "enter heroku web app url here"
 # url = "https://udacity-final-project-a57c3c29e43a.herokuapp.com/inference/"
-url_inference = 'http://localhost:8000/inference'
+url_inference = 'http://localhost:8000/inference/'
 url_root = 'http://localhost:8000/'
 
 
