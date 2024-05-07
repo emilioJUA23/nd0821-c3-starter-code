@@ -23,8 +23,8 @@ jobs:
         run: |
           flake8 .
       - name: run server
-        run: | uvicorn main:app --reload &
-
+        run: | 
+          uvicorn main:app --reload &
       - name: run pytest
         run: |
           pytest ./test.py && pytest ./starter/test_api.py
