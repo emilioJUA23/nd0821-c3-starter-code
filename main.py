@@ -34,8 +34,8 @@ class BaseInferenceObject(BaseModel):
     hours_per_week: int
     native_country: str
 
-    model_config = {
-        "json_schema_extra": {
+    class Config:
+        schema_extra = {
             "examples": [
                 {
                  "age": 40,
@@ -55,7 +55,6 @@ class BaseInferenceObject(BaseModel):
                 }
             ]
         }
-    }
 
 
 app = FastAPI()
